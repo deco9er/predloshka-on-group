@@ -97,3 +97,101 @@
 - **Лимиты**: При массовой рассылке реализована задержка между сообщениями для избежания лимитов Telegram API.
 - **Безопасность**: Доступ к админ-функциям строго ограничен списком `ADMIN_IDS`.
 
+# Telegram Feedback and Support Bot
+
+This project is a Telegram bot designed to organize technical support or feedback channels between users and administration. The bot forwards messages from users to a dedicated admin group, where moderators can reply, ban users, or perform broadcasts.
+
+## 🚀 Features
+
+### For Users
+- **Anonymous Communication**: Messages are forwarded to the admin group without revealing unnecessary personal information.
+- **Dialog Management**: Ability to start or stop a conversation with support via buttons.
+- **Replies**: Receive responses from administration with a button for quick replies.
+
+### For Administration
+- **Admin Panel**: Access management via the `/admin` command (restricted to specific IDs).
+- **Message Handling**: User messages arrive in the designated group with action buttons:
+  - 💬 **Reply**: Enter reply mode for a specific user.
+  - 🚫 **Ban**: Block the user (messages will stop arriving).
+  - 🗑️ **Delete**: Remove the message from the admin group.
+- **Broadcasting**: Mass messaging to all active users (supports text, media, and URL buttons).
+- **Statistics**: Calculate the number of users, banned accounts, and processed messages.
+- **User List**: Paginated list of all users with the ability to ban/unban by ID.
+
+## 🛠 Tech Stack
+
+- **Language**: Python 3.10+
+- **Framework**: [aiogram 3.x](https://docs.aiogram.dev/) (asynchronous)
+- **Database**: SQLite (local file `bot.db`)
+- **Configuration**: Environment variables (`.env`)
+
+## 📦 Installation
+
+1. **Clone the repository**:
+   ```bash
+   git clone <repository_url>
+   cd <folder_name>
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
+   *(Note: Create a `requirements.txt` file containing `aiogram` and `python-dotenv`)*
+
+3. **Configure the environment**:
+   Create a `.env` file in the project root based on `.env.example` (or create a new `.env`):
+   ```env
+   BOT_TOKEN=your_bot_token
+   ADMIN_GROUP_ID=your_admin_group_id
+   ADMIN_IDS=12345678,87654321
+   DB_PATH=bot.db
+   ```
+
+4. **Run the bot**:
+   ```bash
+   python main.py
+   ```
+
+## ⚙️ Configuration
+
+| Variable | Description | Required |
+| :--- | :--- | :--- |
+| `BOT_TOKEN` | Bot token obtained from @BotFather | ✅ |
+| `ADMIN_GROUP_ID` | ID of the group where messages will be sent (bot must be an admin in this group) | ✅ |
+| `ADMIN_IDS` | Comma-separated list of administrator IDs (access to panel and broadcasting) | ✅ |
+| `DB_PATH` | Path to the SQLite database file | ❌ (default: `bot.db`) |
+
+## 📖 Usage
+
+### Admin Setup
+1. Create a group in Telegram and add the bot to it.
+2. Promote the bot to an administrator in the group (to enable message sending capabilities).
+3. Obtain the Group ID (using a bot like @userinfobot or by forwarding a message from the group) and set it in `ADMIN_GROUP_ID`.
+4. Obtain your User ID and add it to `ADMIN_IDS`.
+5. Start the bot and send `/admin` in a private chat to verify access.
+
+### Working with Users
+1. The user presses `/start`.
+2. To send a message, they must press the **"Send 📩"** button.
+3. Messages are forwarded to the admin group.
+4. The administrator presses **"Reply 💬"** under the message and sends the text.
+5. The user receives the response and can reply back via the button.
+
+## 📂 Project Structure
+
+```text
+.
+├── .env                # Configuration file (tokens, IDs)
+├── config.py           # Module for loading and validating configuration
+├── db.py               # SQLite operations (users, bans, message links)
+├── main.py             # Main bot logic, handlers, and FSM
+├── keyboards.py        # Inline keyboard generation
+└── requirements.txt    # Python dependencies
+```
+
+## ⚠️ Important Notes
+
+- **Privacy**: The bot stores user IDs and names in a local database.
+- **Limits**: A delay is implemented between messages during mass broadcasting to avoid hitting Telegram API limits.
+- **Security**: Access to admin functions is strictly restricted to the list of `ADMIN_IDS`.
